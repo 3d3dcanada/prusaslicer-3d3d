@@ -1,0 +1,7 @@
+printer.env
+__pycache__/
+
+# internal / operational, not for the public repo
+HANDOFF-*.md
+CAMERA.md
+camera.sh

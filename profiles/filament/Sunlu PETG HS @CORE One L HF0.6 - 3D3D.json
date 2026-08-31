@@ -1,0 +1,77 @@
+{
+    "type": "filament",
+    "from": "User",
+    "name": "Sunlu PETG HS @CORE One L HF0.6 - 3D3D",
+    "filament_settings_id": [
+        "Sunlu PETG HS @CORE One L HF0.6 - 3D3D"
+    ],
+    "inherits": "Prusa Generic PETG @CORE One HF 0.6",
+    "compatible_printers": [
+        "Prusa CORE One L HF 0.6 nozzle"
+    ],
+    "nozzle_temperature": [
+        "268"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "260"
+    ],
+    "hot_plate_temp": [
+        "85"
+    ],
+    "hot_plate_temp_initial_layer": [
+        "85"
+    ],
+    "textured_plate_temp": [
+        "85"
+    ],
+    "textured_plate_temp_initial_layer": [
+        "85"
+    ],
+    "chamber_temperature": [
+        "35"
+    ],
+    "filament_max_volumetric_speed": [
+        "36"
+    ],
+    "slow_down_layer_time": [
+        "9"
+    ],
+    "slow_down_min_speed": [
+        "15"
+    ],
+    "fan_max_speed": [
+        "60"
+    ],
+    "fan_min_speed": [
+        "30"
+    ],
+    "overhang_fan_speed": [
+        "60"
+    ],
+    "close_fan_the_first_x_layers": [
+        "3"
+    ],
+    "full_fan_speed_layer": [
+        "5"
+    ],
+    "fan_cooling_layer_time": [
+        "25"
+    ],
+    "filament_vendor": [
+        "Sunlu"
+    ],
+    "filament_type": [
+        "PETG"
+    ],
+    "filament_cost": [
+        "15"
+    ],
+    "filament_density": [
+        "1.23"
+    ],
+    "filament_start_gcode": [
+        "M572 S0.032 ; pressure advance\nM142 S36 ; heatbreak target"
+    ],
+    "version": "2.4.1.0",
+    "is_custom_defined": "0"
+}

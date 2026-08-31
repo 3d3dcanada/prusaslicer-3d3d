@@ -1,0 +1,29 @@
+{
+    "type": "filament",
+    "from": "User",
+    "name": "CAL PETG 255 @CORE One L HF0.6 - 3D3D",
+    "filament_settings_id": [
+        "CAL PETG 255 @CORE One L HF0.6 - 3D3D"
+    ],
+    "inherits": "Prusa Generic PETG @CORE One HF 0.6",
+    "compatible_printers": [
+        "Prusa CORE One L HF 0.6 nozzle"
+    ],
+    "nozzle_temperature": [
+        "255"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "255"
+    ],
+    "filament_max_volumetric_speed": [
+        "46"
+    ],
+    "slow_down_layer_time": [
+        "0"
+    ],
+    "filament_type": [
+        "PETG"
+    ],
+    "version": "2.4.1.0",
+    "is_custom_defined": "0"
+}

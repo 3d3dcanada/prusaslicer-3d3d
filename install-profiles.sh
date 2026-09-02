@@ -12,7 +12,7 @@ set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DEST="$HOME/.config/OrcaSlicer/user/default"
 
-if pgrep -f "OrcaSlicer" >/dev/null 2>&1; then
+if pgrep -x orca-slicer >/dev/null 2>&1; then
   echo "OrcaSlicer is running. Close it first (it rewrites its user dir on exit)." >&2
   exit 1
 fi
@@ -35,10 +35,17 @@ for kind in ("machine", "process", "filament"):
             d["print_host"] = ip
             d["printhost_user"] = user
             d["printhost_password"] = pw
-            d["printhost_authorization_type"] = "AuthUserPass"
+            # Orca's enum serializes as "user" (HTTP digest) / "key" (API key).
+            # "AuthUserPass" is not a value Orca knows; it silently falls back
+            # to API-key auth with no key and every request 401s.
+            d["printhost_authorization_type"] = "user"
         with open(os.path.join(dst_dir, os.path.basename(src)), "w") as fh:
             json.dump(d, fh, indent=4, ensure_ascii=False); fh.write("\n")
         n += 1
+        info = os.path.join(dst_dir, os.path.basename(src)[:-5] + ".info")
+        with open(info, "w") as fh:
+            fh.write("sync_info = create\nuser_id = \nsetting_id = \nbase_id = \n"
+                     "updated_time = %d\n" % int(__import__("time").time()))
 print(f"  installed {n} presets into {dest}")
 print("  machine presets carry the PrusaLink host + credentials")
 PY

@@ -1,0 +1,20 @@
+{
+    "type": "filament",
+    "from": "User",
+    "name": "PLA Silk MAXFLOW @CORE One L HF0.4 - 3D3D",
+    "filament_settings_id": [
+        "PLA Silk MAXFLOW @CORE One L HF0.4 - 3D3D"
+    ],
+    "inherits": "Prusa Generic PLA Silk @CORE One",
+    "compatible_printers": [
+        "Prusa CORE One L HF 0.4 nozzle"
+    ],
+    "filament_max_volumetric_speed": [
+        "12"
+    ],
+    "filament_notes": [
+        "3D3D. Flow 12 mm3/s quoted at 225 C, source: DERIVED 60% of PLA. DERIVED, not measured: run a flow tower before trusting it."
+    ],
+    "version": "2.4.1.0",
+    "is_custom_defined": "0"
+}

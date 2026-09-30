@@ -1,0 +1,23 @@
+{
+    "type": "filament",
+    "from": "User",
+    "name": "PETG CF MAXFLOW @CORE One L HF0.6 - 3D3D",
+    "filament_settings_id": [
+        "PETG CF MAXFLOW @CORE One L HF0.6 - 3D3D"
+    ],
+    "inherits": "Generic PETG-CF @System",
+    "compatible_printers": [
+        "Prusa CORE One L HF 0.6 nozzle"
+    ],
+    "filament_max_volumetric_speed": [
+        "21"
+    ],
+    "filament_notes": [
+        "3D3D. Flow 21 mm3/s quoted at 250 C, source: DERIVED 60% of PETG. ABRASIVE: 0.6 ObXidian ONLY, never the 0.4 brass. DERIVED, not measured: run a flow tower before trusting it."
+    ],
+    "required_nozzle_HRC": [
+        "60"
+    ],
+    "version": "2.4.1.0",
+    "is_custom_defined": "0"
+}

@@ -1,0 +1,20 @@
+{
+    "type": "filament",
+    "from": "User",
+    "name": "TPE 85 MAXFLOW @CORE One L HF0.6 - 3D3D",
+    "filament_settings_id": [
+        "TPE 85 MAXFLOW @CORE One L HF0.6 - 3D3D"
+    ],
+    "inherits": "Prusa Generic TPU @CORE One 0.6",
+    "compatible_printers": [
+        "Prusa CORE One L HF 0.6 nozzle"
+    ],
+    "filament_max_volumetric_speed": [
+        "7"
+    ],
+    "filament_notes": [
+        "3D3D. Flow 7 mm3/s quoted at 230 C, source: DERIVED 60% of TPU 95A. DERIVED, not measured: run a flow tower before trusting it. Flexible: do not use an IRON process, the nozzle balls the surface."
+    ],
+    "version": "2.4.1.0",
+    "is_custom_defined": "0"
+}

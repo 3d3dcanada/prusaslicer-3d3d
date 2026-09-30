@@ -5,3 +5,7 @@ __pycache__/
 HANDOFF-*.md
 CAMERA.md
 camera.sh
+
+# local tooling, not for the public repo
+ps3/
+ORCA-G29-UPSTREAM-ISSUE*.md

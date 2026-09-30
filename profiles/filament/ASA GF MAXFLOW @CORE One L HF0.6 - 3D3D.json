@@ -1,0 +1,23 @@
+{
+    "type": "filament",
+    "from": "User",
+    "name": "ASA GF MAXFLOW @CORE One L HF0.6 - 3D3D",
+    "filament_settings_id": [
+        "ASA GF MAXFLOW @CORE One L HF0.6 - 3D3D"
+    ],
+    "inherits": "Prusa Generic ASA @CORE One HF 0.6",
+    "compatible_printers": [
+        "Prusa CORE One L HF 0.6 nozzle"
+    ],
+    "filament_max_volumetric_speed": [
+        "19"
+    ],
+    "filament_notes": [
+        "3D3D. Flow 19 mm3/s quoted at 260 C, source: DERIVED 60% of ASA. ABRASIVE: 0.6 ObXidian ONLY, never the 0.4 brass. DERIVED, not measured: run a flow tower before trusting it."
+    ],
+    "required_nozzle_HRC": [
+        "60"
+    ],
+    "version": "2.4.1.0",
+    "is_custom_defined": "0"
+}

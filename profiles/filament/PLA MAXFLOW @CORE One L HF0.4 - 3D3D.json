@@ -12,6 +12,9 @@
     "filament_max_volumetric_speed": [
         "20"
     ],
+    "filament_notes": [
+        "3D3D. Flow 20 mm3/s quoted at 220 C, source: E3D."
+    ],
     "version": "2.4.1.0",
     "is_custom_defined": "0"
 }

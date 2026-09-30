@@ -24,6 +24,7 @@
         "7000",
         "2500"
     ],
+    "printer_notes": "Don't remove the following keywords! These keywords are used in the \"compatible printer\" condition of the print and filament profiles to link the particular print and filament profiles to this printer profile.\nPRINTER_MODEL_COREONE_L\nHF_NOZZLE\nPG\nNO_TEMPLATES\nSEQ_ARRANGE_MODEL_COREONEL\nABRASIVE_NOZZLE",
     "version": "2.4.1.0",
     "is_custom_defined": "0"
 }

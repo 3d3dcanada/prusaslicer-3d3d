@@ -5,3 +5,6 @@ __pycache__/
 HANDOFF-*.md
 CAMERA.md
 camera.sh
+
+# a local copy of OrcaSlicer resources the ps3 builder reads; third-party, not ours to publish
+ps3/orca-resources/

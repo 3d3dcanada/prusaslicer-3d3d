@@ -38,22 +38,84 @@ NOZZLES = {
         "machine": "Prusa CORE One L HF 0.4 nozzle",
         "width": 0.45,          # Prusa's own extrusion width at 0.4
         "hardened": False,      # brass: no CF, no GF, no glow-in-the-dark
-        # E3D published table for the High Flow Nextruder nozzle, at the
-        # temperature quoted. Brass and ObXidian are within 1 mm3/s at 0.4.
-        "flow": {"PLA": (20, 220), "PETG": (25, 240), "ASA": (27, 260),
-                 "ABS": (25, 255), "PC": (24, 275), "TPU": (8, 240)},
     },
     "HF0.6": {
         "machine": "Prusa CORE One L HF 0.6 nozzle",
         "width": 0.68,
         "hardened": True,       # ObXidian: CF and GF are fine
-        # E3D: 0.6 HF ObXidian is PLA 30 @220, PETG 36 @240, ASA 32 @260.
-        # Note Orca ships 31 for PETG here, which is 5 short of E3D's own
-        # number, and 34 for ASA, which is 2 over it.
-        "flow": {"PLA": (30, 220), "PETG": (36, 240), "ASA": (32, 260),
-                 "ABS": (32, 255), "PC": (30, 275), "TPU": (12, 240)},
     },
 }
+
+# ------------------------------------------------------------- the materials
+#
+# flow: (mm3/s, temperature the figure is quoted at) per nozzle. `src` says
+# where each pair came from, and nothing here is invented:
+#
+#   E3D      E3D's published table for the High Flow Nextruder nozzles, read
+#            2026-08-31. Brass and ObXidian are within 1 mm3/s at 0.4.
+#   DERIVED  no published figure exists for this material, so it is a stated
+#            fraction of the base polymer's number. The fraction itself comes
+#            from Prusa's own bundle: their PETG-CF runs 12 where plain PETG
+#            runs 20 on the same 0.4 HF nozzle, so a filled or softened variant
+#            is taken at 60% of its base. Every DERIVED figure is a starting
+#            point for a flow tower, NOT a measured ceiling.
+#
+# abrasive: filled with carbon or glass. The 0.4 is plain brass and one spool of
+# this through it ruins the nozzle, so abrasive materials are built for the 0.6
+# ObXidian ONLY and the generator refuses to emit them for the 0.4.
+
+FILLED = 0.60   # the Prusa PETG-CF / PETG ratio, applied to filled and softened grades
+
+MATERIALS = {
+    "PLA":      dict(flow={"HF0.4": (20, 220), "HF0.6": (30, 220)}, src="E3D",
+                     parent="Prusa Generic PLA @CORE One HF {n}", abrasive=False),
+    "PLA Silk": dict(flow={"HF0.4": (12, 225), "HF0.6": (18, 225)}, src="DERIVED 60% of PLA",
+                     parent={"HF0.4": "Prusa Generic PLA Silk @CORE One",
+                             "HF0.6": "Prusa Generic PLA Silk @CORE One 0.6"}, abrasive=False),
+    "PETG":     dict(flow={"HF0.4": (25, 240), "HF0.6": (36, 240)}, src="E3D",
+                     parent="Prusa Generic PETG @CORE One HF {n}", abrasive=False),
+    "PETG CF":  dict(flow={"HF0.6": (21, 250)}, src="DERIVED 60% of PETG",
+                     parent={"HF0.6": "Generic PETG-CF @System"}, abrasive=True),
+    "ASA":      dict(flow={"HF0.4": (27, 260), "HF0.6": (32, 260)}, src="E3D",
+                     parent="Prusa Generic ASA @CORE One HF {n}", abrasive=False),
+    "ASA GF":   dict(flow={"HF0.6": (19, 260)}, src="DERIVED 60% of ASA",
+                     parent={"HF0.6": "Prusa Generic ASA @CORE One HF 0.6"}, abrasive=True),
+    "ABS":      dict(flow={"HF0.4": (25, 255), "HF0.6": (32, 255)}, src="E3D",
+                     parent="Prusa Generic ABS @CORE One HF {n}", abrasive=False),
+    "PC":       dict(flow={"HF0.4": (24, 275), "HF0.6": (30, 275)}, src="E3D",
+                     parent={"HF0.4": "Prusament PC Blend @CORE One HF 0.4",
+                             "HF0.6": "Prusament PC Blend @CORE One HF 0.6"}, abrasive=False),
+    "TPU 95A":  dict(flow={"HF0.4": (8, 240), "HF0.6": (12, 240)}, src="E3D",
+                     parent={"HF0.4": "Prusa Generic TPU @CORE One",
+                             "HF0.6": "Prusa Generic TPU @CORE One 0.6"},
+                     abrasive=False, flexible=True),
+    "TPE 85":   dict(flow={"HF0.4": (5, 230), "HF0.6": (7, 230)}, src="DERIVED 60% of TPU 95A",
+                     parent={"HF0.4": "Prusa Generic TPU @CORE One",
+                             "HF0.6": "Prusa Generic TPU @CORE One 0.6"},
+                     abrasive=False, flexible=True),
+}
+
+
+def parent_for(mat, noz):
+    spec = MATERIALS[mat]["parent"]
+    if isinstance(spec, dict):
+        return spec.get(noz)
+    return spec.format(n=noz[2:])
+
+
+def materials_for(noz):
+    """Every material this nozzle may print. Abrasives are 0.6 ObXidian only."""
+    hardened = NOZZLES[noz]["hardened"]
+    out = []
+    for mat, spec in MATERIALS.items():
+        if noz not in spec["flow"]:
+            continue
+        if spec["abrasive"] and not hardened:
+            continue          # brass nozzle: never
+        if parent_for(mat, noz) is None:
+            continue
+        out.append(mat)
+    return out
 
 # Layer heights that have a real Orca parent for each nozzle.
 LAYERS = {
@@ -116,7 +178,7 @@ def build_processes():
     out = []
     for noz, spec in NOZZLES.items():
         width = spec["width"]
-        flow_petg = spec["flow"]["PETG"][0]
+        flow_petg = MATERIALS["PETG"]["flow"][noz][0]
         for layer, parent in LAYERS[noz]:
             ceiling = speed_for(flow_petg, layer, width)
             for tier, (f_flow, f_outer, f_accel) in TIERS.items():
@@ -164,35 +226,102 @@ def build_processes():
                     # Cheap and unambiguously good at these speeds: fewer, longer
                     # moves through the planner on every curve.
                     "enable_arc_fitting": "1",
+
+                    # --- bridging -------------------------------------------
+                    # A bridge is unsupported extrusion, so it is governed by
+                    # cooling, not by flow. bridge_speed above is already
+                    # deliberately the slowest role. thick_bridges off makes the
+                    # bridge follow the real surface instead of being lifted a
+                    # whole layer; Prusa ship it off on the CORE One too.
+                    "thick_bridges": "0",
+                    "bridge_flow": "1",
+                    "internal_bridge_flow": "1",
+                    "bridge_density": "100%",
+                    "enable_extra_bridge_layer": "1",
+                    "bridge_acceleration": str(clamp(accel * 0.35, MAX_ACCEL_PRINT)),
+
+                    # --- overhangs ------------------------------------------
+                    # Four bands from barely overhanging to nearly unsupported.
+                    # These are fractions of the outer wall speed, which is the
+                    # role an overhang actually is.
+                    "detect_overhang_wall": "1",
+                    "enable_overhang_speed": "1",
+                    "overhang_1_4_speed": str(clamp(base * f_outer * 0.85, 1000)),
+                    "overhang_2_4_speed": str(clamp(base * f_outer * 0.55, 1000)),
+                    "overhang_3_4_speed": str(clamp(base * f_outer * 0.35, 1000)),
+                    "overhang_4_4_speed": str(clamp(base * 0.22, 120)),
+                    "extra_perimeters_on_overhangs": "1",
+
+                    # --- ironing --------------------------------------------
+                    # OFF here, deliberately. Measured on 3D3D-CALIPER-1-BACK at
+                    # 0.20mm MAX on the 0.6: ironing took the part from 22m18s to
+                    # 56m06s for 0.10 g more filament. It more than doubles the
+                    # clock because a whole extra pass crawls over every top
+                    # surface. It belongs on a tier you choose, not on every
+                    # profile, so it lives in the IRON twin below.
+                    "ironing_type": "no ironing",
                 })
+
+                # An IRON twin, on the QUALITY tier only. Nobody irons a part
+                # they are running at MAX, and the measurement above is why.
+                # Flow is under Orca's common 10-15% and the speed is fixed
+                # rather than scaled with the tier, because ironing is the one
+                # setting that ruins a top surface when it is too hot or too
+                # fast. `top` is a value that appears in a shipped Orca profile,
+                # so it is known to parse.
+                # NOT for flexibles: the nozzle drags and balls the surface.
+                if tier == "QUALITY":
+                    iron = dict(out[-1])
+                    iron["name"] = iron["print_settings_id"] = (
+                        f"{layer}mm IRON @CORE One L {noz} - 3D3D")
+                    iron.update({
+                        "ironing_type": "top",
+                        "ironing_flow": "10%",
+                        "ironing_speed": "20",
+                        "ironing_spacing": "0.1",
+                        "ironing_pattern": "zig-zag",
+                    })
+                    out.append(iron)
     return out
 
 
 def build_filaments():
     out = []
     for noz, spec in NOZZLES.items():
-        for mat, (flow, at_temp) in spec["flow"].items():
-            if mat == "TPU":
-                parent = ("Prusa Generic TPU @CORE One 0.6" if noz == "HF0.6"
-                          else "Prusa Generic TPU @CORE One")
-            elif mat == "PC":
-                parent = f"Prusament PC Blend @CORE One {noz[:2]} {noz[2:]}"
-            else:
-                parent = f"Prusa Generic {mat} @CORE One {noz[:2]} {noz[2:]}"
-            out.append({
+        for mat in materials_for(noz):
+            m = MATERIALS[mat]
+            flow, at_temp = m["flow"][noz]
+            parent = parent_for(mat, noz)
+            note = (f"3D3D. Flow {flow} mm3/s quoted at {at_temp} C, source: {m['src']}."
+                    + (" ABRASIVE: 0.6 ObXidian ONLY, never the 0.4 brass." if m["abrasive"] else "")
+                    + (" DERIVED, not measured: run a flow tower before trusting it."
+                       if m["src"].startswith("DERIVED") else ""))
+            f = {
                 "type": "filament", "from": "User",
                 "name": f"{mat} MAXFLOW @CORE One L {noz} - 3D3D",
                 "filament_settings_id": [f"{mat} MAXFLOW @CORE One L {noz} - 3D3D"],
                 "inherits": parent,
                 "compatible_printers": [spec["machine"]],
-                # E3D's published ceiling for this nozzle and material. This is
-                # the number to BEAT with a flow calibration, not to trust.
+                # The published or derived ceiling for this nozzle and material.
+                # A number to BEAT with a flow calibration, not to trust.
                 "filament_max_volumetric_speed": L(flow),
-            })
+                "filament_notes": [note],
+            }
+            if m["abrasive"]:
+                # Orca has no filament_abrasive key; required_nozzle_HRC is its
+                # abrasion guard. The ObXidian is a hardened steel nozzle.
+                f["required_nozzle_HRC"] = L(60)
+            if m.get("flexible"):
+                # Ironing is a PROCESS setting in Orca, not a filament one, so it
+                # cannot be switched off from here. Pair these with the FLEX
+                # processes below, which have it off.
+                note += " Flexible: do not use an IRON process, the nozzle balls the surface."
+                f["filament_notes"] = [note]
+            out.append(f)
 
     # Sunlu PETG is the spool he actually runs, at his own measured 268 C.
     for noz, spec in NOZZLES.items():
-        flow = spec["flow"]["PETG"][0]
+        flow = MATERIALS["PETG"]["flow"][noz][0]
         # E3D quote PETG at 240 C and he runs 268. Flow scales with melt rate,
         # so his ceiling is at or above the published one, but that has to be
         # earned by calibration rather than assumed: hold at the published
@@ -244,6 +373,26 @@ def build_filaments():
     return out
 
 
+def _parent_notes(machine_name):
+    """The system profile's printer_notes, walking `inherits` until they appear."""
+    name = machine_name
+    for _ in range(10):
+        for vendor in ("Prusa", "OrcaFilamentLibrary"):
+            path = os.path.join(ORCA_SYS, vendor, "machine", name + ".json")
+            if os.path.exists(path):
+                d = json.load(open(path))
+                n = d.get("printer_notes")
+                if n:
+                    return n if isinstance(n, str) else n[0]
+                name = d.get("inherits")
+                break
+        else:
+            break
+        if not name:
+            break
+    raise SystemExit(f"could not find printer_notes for {machine_name}")
+
+
 def build_machines():
     """Orca's Core One L profiles copy the non-L CORE One's 350 mm/s feedrate.
 
@@ -254,7 +403,7 @@ def build_machines():
     """
     out = []
     for noz, spec in NOZZLES.items():
-        out.append({
+        m = {
             "type": "machine", "from": "User",
             "name": f"{spec['machine']} - 3D3D",
             "printer_settings_id": f"{spec['machine']} - 3D3D",
@@ -264,7 +413,17 @@ def build_machines():
             "machine_max_speed_z": ["15", "15"],
             "machine_max_acceleration_travel": ["6000", "2500"],
             "machine_max_acceleration_extruding": ["7000", "2500"],
-        })
+        }
+        if spec["hardened"]:
+            # Orca's M862.1 A-flag reads the PRINTER's notes, not the filament:
+            #   M862.1 P[nozzle_diameter] A{(printer_notes=~/.*ABRASIVE_NOZZLE.*/ ? 1 : 0)} ...
+            # Orca's own Core One L profile never sets ABRASIVE_NOZZLE, and the
+            # 0.6 profile inherits the 0.4's notes, so the printer is told "no
+            # abrasive nozzle fitted" while the hardened ObXidian is on. The
+            # keywords are also used in compatible-printer conditions, so they
+            # are appended to the inherited block, never replaced.
+            m["printer_notes"] = _parent_notes(spec["machine"]) + "\nABRASIVE_NOZZLE"
+        out.append(m)
     return out
 
 

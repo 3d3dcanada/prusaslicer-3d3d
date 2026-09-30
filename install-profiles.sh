@@ -23,8 +23,9 @@ python3 - "$HERE" "$DEST" "$COREONEL_IP" "$COREONEL_USER" "$COREONEL_PASSWORD" <
 import json, os, sys, glob
 here, dest, ip, user, pw = sys.argv[1:6]
 n = 0
-for kind in ("machine", "process", "filament"):
-    src_dir = os.path.join(here, "profiles", kind)
+# profiles/ is generated (build-profiles.py wipes it); profiles-tuned/ is hand-tuned per filament.
+for root, kind in [(r, k) for r in ("profiles", "profiles-tuned") for k in ("machine", "process", "filament")]:
+    src_dir = os.path.join(here, root, kind)
     dst_dir = os.path.join(dest, kind)
     os.makedirs(dst_dir, exist_ok=True)
     for src in glob.glob(os.path.join(src_dir, "*.json")):

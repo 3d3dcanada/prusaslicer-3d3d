@@ -1,0 +1,60 @@
+{
+    "type": "filament",
+    "from": "User",
+    "name": "Overture TPU 95A @CORE One L HF0.4 - 3D3D",
+    "filament_settings_id": [
+        "Overture TPU 95A @CORE One L HF0.4 - 3D3D"
+    ],
+    "inherits": "Prusa Generic TPU @CORE One",
+    "compatible_printers": [
+        "Prusa CORE One L HF 0.4 nozzle - 3D3D",
+        "Prusa CORE One L HF 0.4 nozzle"
+    ],
+    "filament_vendor": [
+        "Overture"
+    ],
+    "filament_density": [
+        "1.18"
+    ],
+    "nozzle_temperature": [
+        "235"
+    ],
+    "nozzle_temperature_initial_layer": [
+        "235"
+    ],
+    "filament_flow_ratio": [
+        "1.05"
+    ],
+    "filament_max_volumetric_speed": [
+        "4"
+    ],
+    "filament_retraction_length": [
+        "1.5"
+    ],
+    "filament_retraction_speed": [
+        "35"
+    ],
+    "filament_deretraction_speed": [
+        "20"
+    ],
+    "filament_retraction_minimum_travel": [
+        "1"
+    ],
+    "filament_wipe": [
+        "1"
+    ],
+    "filament_z_hop": [
+        "0"
+    ],
+    "fan_min_speed": [
+        "30"
+    ],
+    "fan_max_speed": [
+        "60"
+    ],
+    "filament_notes": [
+        "3D3D 2026-09-30, first pass for Overture black TPU on the Core One L HF0.4. Stock Orca 'Overture TPU @System' is a Bambu profile (220 C, 8 mm3/s, flow 0.95, 0.4 mm retract): cold + fast = gaps between lines, too little retract = strings. Tune from here: flow 1.02-1.08, 230-245 C, 3-5 mm3/s, retract 1-2.5 mm. Dry the spool first (50 C, 6-8 h). No z-hop, no ironing."
+    ],
+    "version": "2.4.1.0",
+    "is_custom_defined": "0"
+}
